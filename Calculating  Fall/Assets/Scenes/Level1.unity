@@ -5175,10 +5175,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
+    - target: {fileID: 2644687664178291395, guid: ca7d06855726d7149bae99c93f70cca6, type: 3}
+      propertyPath: m_GravityScale
+      value: 9.81
+      objectReference: {fileID: 0}
     - target: {fileID: 2644687664178291448, guid: ca7d06855726d7149bae99c93f70cca6, type: 3}
       propertyPath: cam
       value: 
       objectReference: {fileID: 519420028}
+    - target: {fileID: 2644687664178291448, guid: ca7d06855726d7149bae99c93f70cca6, type: 3}
+      propertyPath: jumpForce
+      value: 5000
+      objectReference: {fileID: 0}
     - target: {fileID: 2644687664178291454, guid: ca7d06855726d7149bae99c93f70cca6, type: 3}
       propertyPath: m_RootOrder
       value: 7

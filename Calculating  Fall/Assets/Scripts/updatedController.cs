@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class updatedController : MonoBehaviour
 {
-    [Header("Some Numbers")]
+    [Header("Variables Related Movement")]
     public float jumpForce = 8.0f;
     public float speed = 8.0f;
-    public float moveDirection;
-    public float heroTan;
     public float ladderSpeed;
 
+    float moveDirection;
+    float heroTan;
+
+    Vector3 moveVector;
+
     [Header("Calculate derivative")]
+    [Space(20)]
     float jumpPos1;
     float jumpPos2;
     float derivative;
@@ -62,24 +66,14 @@ public class updatedController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (heroRig.velocity != Vector2.zero)
-        {
-            isMoving = true;
-        }
-        else
-        {
-            isMoving = false;
-        }
 
-        heroRig.velocity = new Vector2(speed * moveDirection, heroRig.velocity.y);
+        heroRig.MovePosition(transform.position + Time.deltaTime * speed * moveVector);
+
         if(jump)
         {
-            heroRig.velocity = new Vector2(heroRig.velocity.x, jumpForce);
-            //heroRig.AddForce(new Vector2(0, jumpForce));
+            //heroRig.velocity = new Vector2(heroRig.velocity.x, jumpForce);
+            heroRig.AddForce(new Vector2(0, jumpForce));
             jump = false;
-
-            heroTan = Mathf.Atan2(heroRig.velocity.y, heroRig.velocity.x) * Mathf.Rad2Deg;
-            Debug.LogWarning("x ve y Velocity üçgen açýsý: " + heroTan);
         }
 
     }
@@ -87,37 +81,34 @@ public class updatedController : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
-        Debug.Log(derivative);
 
-        if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-        {
-            if(Input.GetKey(KeyCode.A))
-            {
-                moveDirection = -1;
-                heroSprite.flipX = true;
-                heroAnim.SetFloat("speed", speed);
-            }
-            else if(Input.GetKey(KeyCode.D))
-            {
-                moveDirection = 1;
-                heroSprite.flipX = false;
-                heroAnim.SetFloat("speed", speed);
-            }
-        }
-        else if(grounded)
-        {
-            moveDirection = 0;
-            heroAnim.SetFloat("speed", 0);
-        }
+        //-------------- Movement --------------
 
-        if(grounded && Input.GetKeyDown(KeyCode.Space))
+        //Set Movement Vector 
+        float xAxis = Input.GetAxisRaw("Horizontal");
+        moveVector.x = xAxis;
+
+        //Set animator speed parameter
+        heroAnim.SetFloat("speed", moveVector.sqrMagnitude);
+
+        //Set looking direction that depends on the last pressed key
+       if(Input.GetKey(KeyCode.A))
+       {           
+           heroSprite.flipX = true;
+       }
+       else if(Input.GetKey(KeyCode.D))
+       {
+           heroSprite.flipX = false;
+       }
+
+
+        if (grounded && Input.GetKeyDown(KeyCode.Space))
         {
             jump = true;
             grounded = false;
 
             heroAnim.SetBool("jumpUp", true);
             heroAnim.SetBool("isJump", true);
-            Debug.LogWarning("Yukarý Çýkýyor");
 
         }
 
@@ -130,7 +121,7 @@ public class updatedController : MonoBehaviour
             heroAnim.SetBool("falling", false);
         }
 
-        // Jump-Up Jump-Down Deðiþimi
+        // Jump-Up & Jump-Down Change
         if (timer >= 0.01f)
         {
             jumpPos1 = gameObject.transform.position.y;
@@ -194,9 +185,7 @@ public class updatedController : MonoBehaviour
             if (heroAnim.GetBool("isJump"))
             {
                 heroAnim.SetBool("jumpFinished", true);
-                Debug.LogWarning("Yere Çarptý");
                 heroAnim.SetBool("isJump", false);
-                Debug.LogWarning("Zýplama Bitti");
                 heroAnim.SetBool("jumpdown", false);
 
                 //heroGoingLava = false;
